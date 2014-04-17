@@ -124,7 +124,7 @@ void bfs(int n)
 	{
 	    if(adj_matrix[u][j]==1)
 	    {
-		printf("Node %d %d \n", u , j);
+//		printf("Node %d %d \n", u , j);
 		parent[j] = u;
 		ENQUEUE(j);
 	    }
@@ -138,10 +138,11 @@ void bfs(int n)
 		    printf(" %d", i);
 		    i = parent[i];
 		}
+		printf("\n");
 	    }
 		    
 	}
-	scanf("%c", &t);
+//	scanf("%c", &t);
     }
     
 }
