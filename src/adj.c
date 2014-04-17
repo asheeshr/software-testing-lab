@@ -4,25 +4,21 @@
 
 #define SIZE 40
 #define CONNECT(x,y) adj_matrix[x][y]=adj_matrix[y][x]=1
-#define INCIDENT(n1, n2, e)				\
-//    {							\
-    inc_matrix[n1][e]=inc_matrix[n2][e]=1;		//	\
-//	for(int k=n1+1; k<n2; k++) inc_matrix[k][e]=2;	\
-//    }
+#define INCIDENT(n1, n2, e) inc_matrix[n1][e]=inc_matrix[n2][e]=1	 
 
 int stack[SIZE];
 int top=-1;
 int adj_matrix[SIZE][SIZE] = {0, };
 int inc_matrix[SIZE][(SIZE*(SIZE-1))/2] = {0, };
 
-int make_matrix(FILE *);
-void draw_matrix(int lines);
+int make_adj_matrix(FILE *);
+int make_inc_matrix(int lines);
 
 int main ()
 {
     char filename[50];
     FILE *fp;
-    int lines;
+    int lines, edges;
     
     printf("Enter the name of the program file: ");
     scanf("%s", filename);
@@ -34,14 +30,14 @@ int main ()
 	return 0;
     }
     
-    lines = make_matrix(fp);
-    
-    draw_matrix(lines);
+    lines = make_adj_matrix(fp);
+
+    edges = make_inc_matrix(lines);
 
     return 0;
 }
 
-int make_matrix(FILE *fp)
+int make_adj_matrix(FILE *fp)
 {
     int c=0, flag=0, temp;
     char buffer[50];
@@ -102,36 +98,34 @@ int make_matrix(FILE *fp)
     return c;
 }
 
-
-void draw_matrix(int l)
+int make_inc_matrix(int l) //From incidence matrix
 {
     int i,j, e=0;
-    //Create channels for edges
     
-    for(i=1;i<l+1;i++)
+    for(i=1;i<l;i++)
     {
-	for(j=i; j>0; j--)
+	for(j=1;j<l+1;j++)
 	{
-	    if(adj_matrix[i][j]) 
+	    if(adj_matrix[j][j-i]==1) 
 	    {
-		INCIDENT(i,j,e);
-		for(int k=i+1; k<j; k++) inc_matrix[k][e]=2;
+		INCIDENT(j,j-i,e);
+		for(int k=j-i+1; k<j; k++) inc_matrix[k][e]=2;
 		e++;
 	    }
 	}
     }
 
-    printf("Incidence Matrix (edges %d)::\n", e);
+    printf("Incidence Matrix (edges %d)::\n", e-1);
     for(i=1; i<l+1; i++)
     {
 	for(j=1; j<e; j++)
 	{
-	    printf("%d ", inc_matrix[i][j]);
+	    printf("%d ", (inc_matrix[i][j]==2)?2:inc_matrix[i][j]);
 	}
 	printf("\n");
     }
     printf("\n");
 
-    //Draw each channel
-    
+
+   return e;
 }
